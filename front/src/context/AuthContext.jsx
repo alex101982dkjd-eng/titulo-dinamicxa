@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API = axios.create({ baseURL: '/api' });
+const API_BASE = import.meta.env.VITE_API_URL || 'https://titulo-dinamicxa-production.up.railway.app/api';
+
+const API = axios.create({ baseURL: API_BASE });
 
 // Interceptor de REQUEST: agrega el token si existe
 API.interceptors.request.use(cfg => {
