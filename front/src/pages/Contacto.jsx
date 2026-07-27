@@ -32,33 +32,50 @@ export default function Contacto() {
 
     setEnviando(true);
 
+    const controlador = new AbortController();
+
+    const tiempoLimite = setTimeout(() => {
+      controlador.abort();
+    }, 15000);
+
     try {
+      const datos = new FormData();
+
+      datos.append('nombre', form.nombre);
+      datos.append('email', form.email);
+      datos.append('telefono', form.telefono);
+      datos.append('mensaje', form.mensaje);
+      datos.append(
+        '_subject',
+        'Nuevo mensaje desde Elegance Events'
+      );
+
       const respuesta = await fetch(
         'https://formspree.io/f/mzdnopyo',
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             Accept: 'application/json',
           },
-          body: JSON.stringify({
-            nombre: form.nombre,
-            email: form.email,
-            telefono: form.telefono,
-            mensaje: form.mensaje,
-            _subject: 'Nuevo mensaje desde Elegance Events',
-          }),
+          body: datos,
+          signal: controlador.signal,
         }
       );
 
       const resultado = await respuesta.json();
 
       if (!respuesta.ok) {
-        console.error('Error de Formspree:', resultado);
-        throw new Error('No se pudo enviar el formulario');
+        const mensajeError =
+          resultado?.errors?.[0]?.message ||
+          resultado?.error ||
+          'Formspree rechazó el formulario';
+
+        throw new Error(mensajeError);
       }
 
-      toast.success('Mensaje enviado. Te responderemos pronto.');
+      toast.success(
+        'Mensaje enviado. Te responderemos pronto.'
+      );
 
       setForm({
         nombre: '',
@@ -68,8 +85,19 @@ export default function Contacto() {
       });
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
-      toast.error('Error al enviar el mensaje. Inténtalo nuevamente.');
+
+      if (error.name === 'AbortError') {
+        toast.error(
+          'El envío tardó demasiado. Revisa tu conexión.'
+        );
+      } else {
+        toast.error(
+          error.message ||
+            'No se pudo enviar el mensaje. Inténtalo nuevamente.'
+        );
+      }
     } finally {
+      clearTimeout(tiempoLimite);
       setEnviando(false);
     }
   };
@@ -77,11 +105,45 @@ export default function Contacto() {
   const wsp =
     'https://wa.me/525536456171?text=Hola,%20me%20gustaría%20cotizar%20mobiliario';
 
+  const mediosContacto = [
+    {
+      icon: '💬',
+      titulo: 'WhatsApp',
+      desc: 'Cotizaciones rápidas y atención inmediata',
+      link: wsp,
+      label: 'Abrir WhatsApp',
+    },
+    {
+      icon: '✉',
+      titulo: 'Correo',
+      desc: 'eleganceevents.contacto@gmail.com',
+      link: 'mailto:eleganceevents.contacto@gmail.com',
+      label: 'Enviar correo',
+    },
+    {
+      icon: '📍',
+      titulo: 'Ubicación',
+      desc: 'Jilotepec, Estado de México',
+      link: '#',
+      label: null,
+    },
+    {
+      icon: '🕐',
+      titulo: 'Horarios',
+      desc: 'Lunes a Sábado: 9:00 AM – 7:00 PM',
+      link: '#',
+      label: null,
+    },
+  ];
+
   return (
     <div className="page-top">
       <section className="section">
         <div className="container">
-          <div className="text-center" style={{ marginBottom: 48 }}>
+          <div
+            className="text-center"
+            style={{ marginBottom: 48 }}
+          >
             <p className="section-label">Estamos aquí</p>
             <h1 className="section-title">Contáctanos</h1>
             <div className="divider-gold" />
@@ -89,7 +151,12 @@ export default function Contacto() {
 
           <div className="contacto-grid">
             <div className="contacto-info">
-              <h2 style={{ marginBottom: 8, fontSize: '1.3rem' }}>
+              <h2
+                style={{
+                  marginBottom: 8,
+                  fontSize: '1.3rem',
+                }}
+              >
                 ¿Tienes alguna duda?
               </h2>
 
@@ -100,42 +167,17 @@ export default function Contacto() {
                   fontSize: '0.95rem',
                 }}
               >
-                Comunícate con nosotros por cualquiera de estos medios.
-                Respondemos en menos de 2 horas en horario de atención.
+                Comunícate con nosotros por cualquiera de
+                estos medios. Respondemos en menos de 2 horas
+                en horario de atención.
               </p>
 
               <ul className="contacto-info-list">
-                {[
-                  {
-                    icon: '💬',
-                    titulo: 'WhatsApp',
-                    desc: 'Cotizaciones rápidas y atención inmediata',
-                    link: wsp,
-                    label: 'Abrir WhatsApp',
-                  },
-                  {
-                    icon: '✉',
-                    titulo: 'Correo',
-                    desc: 'eleganceevents.contacto@gmail.com',
-                    link: 'mailto:eleganceevents.contacto@gmail.com',
-                    label: 'Enviar correo',
-                  },
-                  {
-                    icon: '📍',
-                    titulo: 'Ubicación',
-                    desc: 'Jilotepec, Estado de México',
-                    link: '#',
-                    label: null,
-                  },
-                  {
-                    icon: '🕐',
-                    titulo: 'Horarios',
-                    desc: 'Lunes a Sábado: 9:00 AM – 7:00 PM',
-                    link: '#',
-                    label: null,
-                  },
-                ].map(contacto => (
-                  <li className="contacto-item" key={contacto.titulo}>
+                {mediosContacto.map(contacto => (
+                  <li
+                    className="contacto-item"
+                    key={contacto.titulo}
+                  >
                     <div className="contacto-icon">
                       {contacto.icon}
                     </div>
@@ -260,7 +302,10 @@ export default function Contacto() {
               </h2>
 
               <div className="form-group">
-                <label htmlFor="nombre">Nombre *</label>
+                <label htmlFor="nombre">
+                  Nombre *
+                </label>
+
                 <input
                   id="nombre"
                   name="nombre"
@@ -269,12 +314,16 @@ export default function Contacto() {
                   onChange={e =>
                     set('nombre', e.target.value)
                   }
+                  autoComplete="name"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="email">Correo *</label>
+                <label htmlFor="email">
+                  Correo *
+                </label>
+
                 <input
                   id="email"
                   name="email"
@@ -283,12 +332,16 @@ export default function Contacto() {
                   onChange={e =>
                     set('email', e.target.value)
                   }
+                  autoComplete="email"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="telefono">Teléfono</label>
+                <label htmlFor="telefono">
+                  Teléfono
+                </label>
+
                 <input
                   id="telefono"
                   name="telefono"
@@ -297,11 +350,15 @@ export default function Contacto() {
                   onChange={e =>
                     set('telefono', e.target.value)
                   }
+                  autoComplete="tel"
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="mensaje">Mensaje *</label>
+                <label htmlFor="mensaje">
+                  Mensaje *
+                </label>
+
                 <textarea
                   id="mensaje"
                   name="mensaje"
