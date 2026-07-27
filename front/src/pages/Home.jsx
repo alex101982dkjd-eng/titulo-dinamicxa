@@ -22,7 +22,7 @@ const PAQUETES = [
 ];
 
 export default function Home() {
-  const wsp = 'https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20gustaría%20cotizar%20mobiliario%20para%20evento';
+  const wsp = 'https://wa.me/5536456171?text=Hola,%20me%20gustaría%20cotizar%20mobiliario%20para%20evento';
   const mail = 'mailto:contacto@eleganceevents.com';
 
   return (

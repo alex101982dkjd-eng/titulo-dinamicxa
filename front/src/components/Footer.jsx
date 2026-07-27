@@ -25,7 +25,7 @@ export default function Footer() {
           <div className="footer-col">
             <h4>Contacto</h4>
             <ul>
-              <li><a href="https://wa.me/521XXXXXXXXXX" target="_blank" rel="noreferrer">💬 WhatsApp</a></li>
+              <li><a href="https://wa.me/5536456171" target="_blank" rel="noreferrer">💬 WhatsApp</a></li>
               <li><a href="mailto:contacto@eleganceevents.com">✉ Correo</a></li>
               <li><a href="#">📍 Jilotepec, Estado de México</a></li>
               <li><a href="#">🕐 Lun–Sáb: 9AM–7PM</a></li>
