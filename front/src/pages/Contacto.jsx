@@ -18,7 +18,7 @@ export default function Contacto() {
     finally { setEnviando(false); }
   };
 
-  const wsp = 'https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20gustaría%20cotizar%20mobiliario';
+  const wsp = 'https://wa.me/5536456171?text=Hola,%20me%20gustaría%20cotizar%20mobiliario';
 
   return (
     <div className="page-top">
@@ -40,7 +40,7 @@ export default function Contacto() {
               <ul className="contacto-info-list">
                 {[
                   { icon: '💬', titulo: 'WhatsApp', desc: 'Cotizaciones rápidas y atención inmediata', link: wsp, label: 'Abrir WhatsApp' },
-                  { icon: '✉', titulo: 'Correo', desc: 'contacto@eleganceevents.com', link: 'mailto:contacto@eleganceevents.com', label: 'Enviar correo' },
+                  { icon: '✉', titulo: 'Correo', desc: 'eleganceevents.contacto@gmail.com', link: 'mailto:eleganceevents.contacto@gmail.com', label: 'Enviar correo' },
                   { icon: '📍', titulo: 'Ubicación', desc: 'Jilotepec, Estado de México', link: '#', label: null },
                   { icon: '🕐', titulo: 'Horarios', desc: 'Lunes a Sábado: 9:00 AM – 7:00 PM', link: '#', label: null },
                 ].map(c => (
